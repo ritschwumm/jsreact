@@ -190,6 +190,15 @@ jsreact.Streams	= {
 		return jsreact.Streams.sample(function(streamValue, signalValue) { return signalValue; })(stream, signal);
 	},
 	
+	// Stream[T] => Signal[Boolean] => Stream[T]
+	gated: function(stream) {
+		return function(booleanSignal) {
+			return booleanSignal.flatMapStream(function(enable) {
+				return enable ? stream : jsreact.Streams.never();
+			});
+		};
+	},
+	
 	// T => Stream[T] => Signal[T]
 	hold: function(initial) {
 		return function(stream) {

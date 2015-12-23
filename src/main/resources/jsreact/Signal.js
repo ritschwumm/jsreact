@@ -28,7 +28,7 @@ jsreact.Signal.prototype	= {
 	changes:		function()				{ return jsreact.Signals.changes(this);				},
 	pluck:			function(key)			{ return jsreact.Signals.pluck(key)(this);			},
 	destruct:		function(keys)			{ return jsreact.Signals.destruct(keys)(this);		},
-
+	
 	//------------------------------------------------------------------------------
 	//## private
 	

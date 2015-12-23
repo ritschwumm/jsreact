@@ -32,6 +32,7 @@ jsreact.Stream.prototype	= {
 	trues:		function()				{ return jsreact.Streams.trues(this);					},
 	falses:		function()				{ return jsreact.Streams.falses(this);					},
 	not:		function()				{ return jsreact.Streams.not(this);						},
+	gated:		function(boolSignal)	{ return jsreact.Streams.gated(this)(boolSignal);		},
 	
 	//------------------------------------------------------------------------------
 	//## private
