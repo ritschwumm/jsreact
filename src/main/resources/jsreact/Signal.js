@@ -29,7 +29,9 @@ jsreact.Signal.prototype	= {
 	combineMany:	function(func)			{ return jsreact.Signals.combineMany(func)(this);	},
 	sequenceArray:	function()				{ return jsreact.Signals.sequenceArray(this);		},
 	traverseArray:	function(func)			{ return jsreact.Signals.traverseArray(func)(this);	},
-	
+	pluck:			function(key)			{ return jsreact.Signals.pluck(key)(this);			},
+	destruct:		function(keys)			{ return jsreact.Signals.destruct(keys)(this);		},
+
 	//------------------------------------------------------------------------------
 	//## private
 	

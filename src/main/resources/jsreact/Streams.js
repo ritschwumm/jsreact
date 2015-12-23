@@ -222,6 +222,32 @@ jsreact.Streams	= {
 		};
 	},
 	
+	// ((S, T) => { state:S, result:U } => S => Stream[T] => Stream[U]
+	stateful: function(func) {
+		return function(initial) {
+			var state	= initial;
+			return function(stream) {
+				return new jsreact.Stream(function(first) {
+					stream.update();
+					if (stream.fire) {
+						var next	= func(state, stream.change);
+						state		= next.state;
+						return {
+							change:	next.result,
+							fire:	stream.fire//,
+						};
+					}
+					else {
+						return {
+							change:	null,
+							fire:	false//,
+						};
+					}
+				});
+			};
+		};
+	},
+	
 	// first stream to fire wins
 	// Array[Stream[T]] => Stream[T]
 	orElseMany: function(streamArray) {
@@ -278,8 +304,20 @@ jsreact.Streams	= {
 	
 	//------------------------------------------------------------------------------
 	
+	// Array[Key] => Stream[{Key:_ ...}] => Hash[Key, Stream[_]]
+	destruct: function(keys) {
+		return function(stream) {
+			var out	= {};
+			for (var i=0; i<keys.length; i++) {
+				var key		= keys[i];
+				out[key]	= jsreact.Streams.pluck(key)(stream);
+			}
+			return out;
+		};
+	},
+	
 	// Key => Stream[{Key:X}] => Stream[X]
-	destruct: function(key) {
+	pluck: function(key) {
 		return function(stream) {
 			return new jsreact.Stream(function(first) {
 				stream.update();

@@ -161,7 +161,7 @@ jsreact.Signals = {
 	
 	//------------------------------------------------------------------------------
 	
-	// Hash[Signal[_]]	=> Signal[Hash[_]]
+	// Hash[Key,Signal[_]]	=> Signal[Hash[Key,_]]
 	construct: function(inputs) {
 		var keys	= inputs.keys();
 		var values	= keys.map(function(key) { return inputs[key]; });
@@ -177,5 +177,25 @@ jsreact.Signals = {
 			}
 			else return previous;
 		});
+	},
+	
+	// Array[Key] => Signal[{Key:_ ...}] => Hash[Key, Signal[_]]
+	destruct: function(keys) {
+		return function(signal) {
+			var out	= {};
+			for (var i=0; i<keys.length; i++) {
+				var key		= keys[i];
+				out[key]	= jsreact.Signals.pluck(key)(signal);
+			}
+			return out;
+		};
+	},
+	
+	// Key => Signal[{Key:X}] => Signal[X]
+	pluck: function(key) {
+		function pluck(it) { return it[key]; }
+		return function(signal) {
+			return jsreact.Signals.map(pluck)(signal);
+		};
 	}//,
 };
