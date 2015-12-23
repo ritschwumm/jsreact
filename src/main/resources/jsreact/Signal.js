@@ -16,6 +16,7 @@ jsreact.Signal.prototype	= {
 	//------------------------------------------------------------------------------
 	//## syntax
 	
+	treatAsEqual:	function(func)			{ return jsreact.Signals.treatAsEqual(func)(this);	},
 	map:			function(func)			{ return jsreact.Signals.map(func)(this);			},
 	ap:				function(func)			{ return jsreact.Signals.ap(func)(this);			},
 	combine:		function(that, func)	{ return jsreact.Signals.combine(func)(this, that);	},

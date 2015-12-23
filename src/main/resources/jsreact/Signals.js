@@ -5,6 +5,18 @@ jsreact.Signals = {
 	constant: function(value) {
 		return new jsreact.Signal(jsreact.Functions.constant(value));
 	},
+	
+	// ((T, T) => Boolean) => Signal[T] => Signal[T]
+	treatAsEqual: function(func) {
+		return function(signal) {
+			return new jsreact.Signal(function(first, previous) {
+				signal.update();
+				return first || !func(signal.value, previous)
+						? signal.value
+						: previous;
+			});
+		};
+	},
 
 	// (S => T) => (Signal[S] => Signal[T])
 	map: function(func) {
