@@ -7,7 +7,7 @@ jsreact.Streams	= {
 		return new jsreact.Stream(
 			jsreact.Functions.constant({
 				change:	null,
-				fire:	false
+				fire:	false//,
 			})
 		);
 	},
@@ -17,7 +17,7 @@ jsreact.Streams	= {
 		return new jsreact.Stream(
 			jsreact.Functions.constant({
 				change:	change,
-				fire:	true
+				fire:	true//,
 			})
 		);
 	},
@@ -27,7 +27,7 @@ jsreact.Streams	= {
 		return new jsreact.Stream(function(first) {
 			return {
 				change:	change,
-				fire:	first
+				fire:	first//,
 			};
 		});
 	},
@@ -39,7 +39,7 @@ jsreact.Streams	= {
 			stream2.update();
 			return {
 				change:	stream1.fire ? stream1.change : stream2.change,
-				fire:	stream1.fire || stream2.fire
+				fire:	stream1.fire || stream2.fire//,
 			};
 		});
 	},
@@ -54,7 +54,7 @@ jsreact.Streams	= {
 			if (stream2.fire)	changes.push(stream2.change);
 			return {
 				change:	changes,
-				fire:	changes.length !== 0
+				fire:	changes.length !== 0//,
 			};
 		});
 	},
@@ -66,7 +66,7 @@ jsreact.Streams	= {
 				stream.update();
 				return {
 					change:	stream.change,
-					fire:	stream.fire && pred(stream.change)
+					fire:	stream.fire && pred(stream.change)//,
 				};
 			});
 		};
@@ -90,8 +90,8 @@ jsreact.Streams	= {
 	partition: function(pred) {
 		return function(stream) {
 			return {
-				trues:		jsreact.Streams.filter(pred)(stream),
-				falses:		jsreact.Streams.filterNot(pred)(stream)//,
+				trues:	jsreact.Streams.filter(pred)(stream),
+				falses:	jsreact.Streams.filterNot(pred)(stream)//,
 			};
 		};
 	},
@@ -118,7 +118,7 @@ jsreact.Streams	= {
 				stream.update();
 				return {
 					change:	stream.fire ? func(stream.change) : null,
-					fire:	stream.fire
+					fire:	stream.fire//,
 				};
 			});
 		};
@@ -131,7 +131,7 @@ jsreact.Streams	= {
 				stream.update();
 				return {
 					change:	value,
-					fire:	stream.fire
+					fire:	stream.fire//,
 				};
 			});
 		};
@@ -166,7 +166,7 @@ jsreact.Streams	= {
 			stream.update();
 			return {
 				change:	stream.change,
-				fire:	stream.fire
+				fire:	stream.fire//,
 			};
 		});
 	},
@@ -179,7 +179,7 @@ jsreact.Streams	= {
 				signal.update();
 				return {
 					change:	stream.fire ? func(stream.change, signal.value) : null,
-					fire:	stream.fire
+					fire:	stream.fire//,
 				};
 			});
 		};
@@ -215,7 +215,7 @@ jsreact.Streams	= {
 					}
 					return {
 						change:	value,
-						fire:	stream.fire
+						fire:	stream.fire//,
 					};
 				});
 			};

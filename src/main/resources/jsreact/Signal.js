@@ -28,7 +28,7 @@ jsreact.Signal.prototype	= {
 	changes:		function()				{ return jsreact.Signals.changes(this);				},
 	combineMany:	function(func)			{ return jsreact.Signals.combineMany(func)(this);	},
 	sequenceArray:	function()				{ return jsreact.Signals.sequenceArray(this);		},
-	traverseArray:	function(func)			{ return jsreact.Signals.sequenceArray(func)(this);	},
+	traverseArray:	function(func)			{ return jsreact.Signals.traverseArray(func)(this);	},
 	
 	//------------------------------------------------------------------------------
 	//## private
