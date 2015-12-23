@@ -108,7 +108,7 @@ jsreact.Streams	= {
 	
 	// Stream[Boolean] => Stream[Boolean]
 	not: function(stream) {
-		return jsreact.Streams.map(function(it) { return !it; });
+		return jsreact.Streams.map(function(it) { return !it; })(stream);
 	},
 
 	// (S => T) => (Stream[S] => Stream[T])
@@ -151,7 +151,7 @@ jsreact.Streams	= {
 	// (S => Stream[T]) => (Stream[S] => Stream[T])
 	flatMap: function(func) {
 		return function(stream) {
-			return jsreact.Streams.flatten(jsreact.Streams.map(func, signal));
+			return jsreact.Streams.flatten(jsreact.Streams.map(func, stream));
 		};
 	},
 	
