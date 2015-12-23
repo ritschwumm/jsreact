@@ -6,6 +6,9 @@ jsreact.Observing	= function Observing(aliveSignal) {
 	this.aliveSignal	= aliveSignal;
 };
 jsreact.Observing.prototype	= {
+	//------------------------------------------------------------------------------
+	//## observing
+	
 	/** alive while this Observing is alive and another Signal didn't become false */
 	child: function(aliveSignal) {
 		function and(a, b) { return a && b; }
@@ -13,13 +16,16 @@ jsreact.Observing.prototype	= {
 		return new jsreact.Observing(childAlive);
 	},
 	
+	//------------------------------------------------------------------------------
+	//## drain
+	
 	// (Reactive[T], Handler[T]) -> Unit
 	observe: function(reactive, handler) {
-		var self	= this;
-		
-		self.updateReactive(self.aliveSignal);
-		if (self.aliveSignal.value) {
-			self.updateAndNotifyReactive(reactive, handler, true);
+		this.updateReactive(this.aliveSignal);
+		if (this.aliveSignal.value) {
+			this.updateAndNotifyReactive(reactive, handler, true);
+			
+			var self	= this;
 			var unsubscribe	= jsreact.Engine.subscribe(function() {
 				self.updateReactive(self.aliveSignal);
 				if (self.aliveSignal.value) {

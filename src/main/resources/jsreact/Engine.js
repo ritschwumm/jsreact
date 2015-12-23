@@ -11,14 +11,12 @@ jsreact.Engine	= {
 	
 	subscribers:	[],
 	currentTick:	{},
-	nextTick:		{},
 	propagating:	false,
 	
-	propagate: function() {
+	propagate: function(currentTick) {
 		if (this.propagating)	throw new Error("propagation already in progress");
 		
-		this.currentTick	= this.nextTick;
-		this.nextTick		= {};
+		this.currentTick	= currentTick;
 		
 		this.propagating	= true;
 		// cloned because observers might change the original array

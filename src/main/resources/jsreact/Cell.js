@@ -19,13 +19,15 @@ jsreact.Cell.prototype	= {
 	//## private
 	
 	setImpl: function(value) {
-		this.signal.version	= jsreact.Engine.nextTick;
-		var previous		= this.signal.value;
+		if (value === this.signal.value)	return;
+		
+		var nextTick	= {};
+		
+		this.signal.version	= nextTick;
 		this.signal.value	= value;
-		this.signal.fire	= this.signal.value !== previous;
-		if (this.signal.fire) {
-			jsreact.Engine.propagate();
-		}
+		this.signal.fire	= true;
+		jsreact.Engine.propagate(nextTick);
+		this.signal.fire	= false;
 	},
 	
 	modifyImpl: function(func) {

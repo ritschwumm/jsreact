@@ -15,10 +15,12 @@ jsreact.Emitter.prototype	= {
 	},
 	
 	emitImpl: function(change) {
-		this.stream.version	= jsreact.Engine.nextTick;
+		var nextTick	= {};
+		
+		this.stream.version	= nextTick;
 		this.stream.change	= change;
 		this.stream.fire	= true;
-		jsreact.Engine.propagate();
+		jsreact.Engine.propagate(nextTick);
 		this.stream.fire	= false;
 	}//,
 };
