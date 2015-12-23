@@ -308,7 +308,7 @@ jsreact.Streams	= {
 	// Stream[T]* => Stream[Array[T]] (non-empty)
 	multiMerge: function(/*streams*/) {
 		var inputs	= Array.prototype.slice.call(arguments, 0);
-		return jsreact.Signals.mergeMany(inputs);
+		return jsreact.Streams.mergeMany(inputs);
 	},
 	
 	//------------------------------------------------------------------------------
