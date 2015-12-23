@@ -1,8 +1,9 @@
 var jsreact	= jsreact || {};
 
 /** alive until the alive signal becomes false */
-// Signal[Boolean] -> Observing
-jsreact.Observing	= function Observing(aliveSignal) {
+// (Engine, Signal[Boolean]) -> Observing
+jsreact.Observing	= function Observing(engine, aliveSignal) {
+	this.engine			= engine;
 	this.aliveSignal	= aliveSignal;
 };
 jsreact.Observing.prototype	= {
@@ -13,7 +14,7 @@ jsreact.Observing.prototype	= {
 	child: function(aliveSignal) {
 		function and(a, b) { return a && b; }
 		var childAlive	= jsreact.Signals.combine(and)(this.aliveSignal, aliveSignal);
-		return new jsreact.Observing(childAlive);
+		return new jsreact.Observing(this.engine, childAlive);
 	},
 	
 	//------------------------------------------------------------------------------
@@ -21,13 +22,13 @@ jsreact.Observing.prototype	= {
 	
 	// (Reactive[T], Handler[T]) -> Unit
 	observe: function(reactive, handler) {
-		this.updateReactive(this.aliveSignal);
+		this.engine.updateReactive(this.aliveSignal);
 		if (this.aliveSignal.value) {
 			this.updateAndNotifyReactive(reactive, handler, true);
 			
 			var self	= this;
-			var unsubscribe	= jsreact.Engine.subscribe(function() {
-				self.updateReactive(self.aliveSignal);
+			var unsubscribe	= self.engine.subscribe(function() {
+				self.engine.updateReactive(self.aliveSignal);
 				if (self.aliveSignal.value) {
 					self.updateAndNotifyReactive(reactive, handler, false);
 				}
@@ -40,7 +41,7 @@ jsreact.Observing.prototype	= {
 	
 	// (Reactive[T], Handler[T]) -> Unit
 	initialize: function(reactive, handler) {
-		this.updateReactive(this.aliveSignal);
+		this.engine.updateReactive(this.aliveSignal);
 		if (this.aliveSignal.value) {
 			this.updateAndNotifyReactive(reactive, handler, true);
 		}
@@ -61,17 +62,7 @@ jsreact.Observing.prototype	= {
 	
 	// (Reactive[T], Handler[T], Boolean) -> Unit
 	updateAndNotifyReactive: function(reactive, handler, first) {
-		this.updateReactive(reactive);
+		this.engine.updateReactive(reactive);
 		reactive.notify(first, handler);
-	},
-	
-	// Reactive[T] -> Unit
-	updateReactive: function(reactive) {
-		reactive.update(jsreact.Engine.currentTick);
 	}//,
-};
-jsreact.Observing.always	= function() {
-	return new jsreact.Observing(
-		jsreact.Signals.constant(true)	
-	);
 };

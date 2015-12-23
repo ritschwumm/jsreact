@@ -1,9 +1,12 @@
 var jsreact	= jsreact || {};
 
-jsreact.DOM = {
+jsreact.DOM = function DOM(connectExternalFunc) {
+	this.connectExternalFunc	= connectExternalFunc;
+};
+jsreact.DOM.prototype	= {
 	// DOMNode,String,Boolean,Boolean => { stream:Stream[_], dispose:()=>Unit }
 	eventStream: function(target, eventName, preventDefault, capture) {
-		return this.connect(function(handler) {
+		return this.connectExternalFunc(function(handler) {
 			var listener	= function(ev) {
 				if (preventDefault)	ev.preventDefault();
 				handler(ev);
@@ -18,20 +21,9 @@ jsreact.DOM = {
 	
 	// Number => { stream:Stream[_], dispose:()=>Unit }
 	intervalStream: function(cycleMillis) {
-		this.connect(function(handler) {
+		this.connectExternalFunc(function(handler) {
 			var id	= window.setInterval(handler, cycleMillis);
 			return window.clearInterval.bind(window, id);
 		});
-	},
-	
-	// ((T => Unit) => (() => Unit)) => { stream:Stream[T], dispose:()=>Unit }
-	// roughly (Handler[T] => Disposer) => (Stream[T], Disposer)
-	connect: function(subscribeFunc) {
-		var emitter		= new jsreact.Emitter();
-		var dispose		= subscribeFunc(emitter.emit.bind(emitter));
-		return {
-			stream:		emitter.stream,
-			dispose:	dispose//,
-		};
 	}//,
 };

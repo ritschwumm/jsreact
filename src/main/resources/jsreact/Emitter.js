@@ -1,7 +1,11 @@
 var jsreact	= jsreact || {};
 
-// () -> { stream:Stream[T], emit:T=>Unit }
-jsreact.Emitter = function() {
+// (Tick => Unit) => { stream:Stream[T], emit:T=>Unit }
+jsreact.Emitter = function(propagateFunc) {
+	this.propagateFunc	= propagateFunc;
+	
+	//## public
+	
 	this.stream	= new jsreact.Stream(function(currentTick, first) {
 		return {
 			fire:	this.fire,
@@ -20,7 +24,7 @@ jsreact.Emitter.prototype	= {
 		this.stream.version	= nextTick;
 		this.stream.change	= change;
 		this.stream.fire	= true;
-		jsreact.Engine.propagate(nextTick);
+		this.propagateFunc(nextTick);
 		this.stream.fire	= false;
 	}//,
 };

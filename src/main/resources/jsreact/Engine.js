@@ -1,17 +1,57 @@
 var jsreact	= jsreact || {};
 
-jsreact.Engine	= {
-	//------------------------------------------------------------------------------
+jsreact.Engine	= function(onPropagationError) {
+	this.onPropagationError	= onPropagationError;
+	
+	this.subscribers	= [];
+	this.currentTick	= {};
+	this.propagating	= false;
+	
+	this.propagateFunc	= this.propagate.bind(this);
+	
 	//## public
 	
-	onPropagationError:	function(e) {},
+	// TODO ugly
+	this.DOM	= new jsreact.DOM(this.connectExternal.bind(this));
+};
+jsreact.Engine.prototype	= {
+	//------------------------------------------------------------------------------
+	//## source
+	
+	newCell: function(initial) {
+		return new jsreact.Cell(this.propagateFunc, initial);
+	},
+	
+	newEmitter: function() {
+		return new jsreact.Emitter(this.propagateFunc);
+	},
+	
+	connectExternal: function(subscribeFunc) {
+		var emitter		= this.newEmitter();
+		var dispose		= subscribeFunc(emitter.emit.bind(emitter));
+		return {
+			stream:		emitter.stream,
+			dispose:	dispose//,
+		};
+	},
+	
+	//------------------------------------------------------------------------------
+	//## drain
+	
+	newObserving: function(aliveSignal) {
+		return new jsreact.Observing(this, aliveSignal);
+	},
+	
+	//------------------------------------------------------------------------------
+	//## package
+	
+	// Reactive[T] => Unit
+	updateReactive: function(reactive) {
+		reactive.update(this.currentTick);
+	},
 	
 	//------------------------------------------------------------------------------
 	//## private
-	
-	subscribers:	[],
-	currentTick:	{},
-	propagating:	false,
 	
 	propagate: function(currentTick) {
 		if (this.propagating)	throw new Error("propagation already in progress");

@@ -1,7 +1,11 @@
 var jsreact	= jsreact || {};
 
-// T -> { signal:Signal[T], set:T=>Unit }
-jsreact.Cell = function(initial) {
+// (Tick => Unit, T) => { signal:Signal[T], set:T=>Unit }
+jsreact.Cell = function(propagateFunc, initial) {
+	this.propagateFunc	= propagateFunc;
+	
+	//## public
+	
 	this.signal	= new jsreact.Signal(function(currentTick, first, previous) {
 		return first ? initial : previous;
 	});
@@ -26,7 +30,7 @@ jsreact.Cell.prototype	= {
 		this.signal.version	= nextTick;
 		this.signal.value	= value;
 		this.signal.fire	= true;
-		jsreact.Engine.propagate(nextTick);
+		this.propagateFunc(nextTick);
 		this.signal.fire	= false;
 	},
 	
