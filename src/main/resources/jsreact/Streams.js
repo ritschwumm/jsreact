@@ -86,6 +86,16 @@ jsreact.Streams	= {
 		});
 	},
 	
+	// (T => Boolean) => Stream[T] => { trues:Stream[T], falses:Stream[T] }
+	partition: function(pred) {
+		return function(stream) {
+			return {
+				trues:		jsreact.Streams.filter(pred)(stream),
+				falses:		jsreact.Streams.filterNot(pred)(stream)//,
+			};
+		};
+	},
+	
 	// Stream[Boolean] => Stream[Boolean]
 	trues: function(stream) {
 		return jsreact.Streams.filter(function(it) { return !!it; })(stream);
@@ -211,6 +221,20 @@ jsreact.Streams	= {
 	},
 	
 	//------------------------------------------------------------------------------
+	
+	// Key => Stream[{Key:X}] => Stream[X]
+	destruct: function(key) {
+		return function(stream) {
+			return new jsreact.Stream(function(first) {
+				stream.update();
+				var fire	= stream.fire && stream.change.hasOwnProperty(key);
+				return {
+					change:	fire ? stream.change[key] : null,
+					fire:	fire//,
+				};
+			});
+		};
+	},
 	
 	// Stream[T]* => Stream[T]
 	multiOrElse: function(/*streams*/) {

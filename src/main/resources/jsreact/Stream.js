@@ -16,6 +16,8 @@ jsreact.Stream.prototype	= {
 	filter:		function(pred)			{ return jsreact.Streams.filter(pred)(this);			},
 	filterNot:	function(pred)			{ return jsreact.Streams.filterNot(pred)(this);			},
 	notNull:	function()				{ return jsreact.Streams.notNull()(this);				},
+	partition:	function(pred)			{ return jsreact.Streams.partition(pred)(this);			},	
+	destruct:	function(key)			{ return jsreact.Streams.destruct(key)(this);			},
 	map:		function(func)			{ return jsreact.Streams.map(func)(this); 				},
 	tag:		function(value)			{ return jsreact.Streams.tag(value)(this); 				},
 	ap:			function(valueStream)	{ return jsreact.Streams.ap(this)(valueStream); 		},
