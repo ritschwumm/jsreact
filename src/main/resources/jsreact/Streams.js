@@ -203,20 +203,22 @@ jsreact.Streams	= {
 		};
 	},
 	
-	// (T, (T, S) =>T) => Stream[S] => Stream[T]
-	fold: function(initial, func) {
-		var value	= initial;
-		return function(stream) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
-				if (stream.fire) {
-					value	= func(value, stream.change);
-				}
-				return {
-					change:	value,
-					fire:	stream.fire
-				};
-			});
+	// ((T, S) =>T) => T => Stream[S] => Stream[T]
+	fold: function(func) {
+		return function(initial) {
+			var value	= initial;
+			return function(stream) {
+				return new jsreact.Stream(function(first) {
+					stream.update();
+					if (stream.fire) {
+						value	= func(value, stream.change);
+					}
+					return {
+						change:	value,
+						fire:	stream.fire
+					};
+				});
+			};
 		};
 	},
 	

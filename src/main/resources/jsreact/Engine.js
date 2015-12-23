@@ -29,7 +29,7 @@ jsreact.Engine	= {
 	
 	/** returns a disconnect function */
 	// (Stream[T], Cell[T]) -> () -> Boolean
-	feedbackCell: function(stream, cell) {
+	feedCell: function(stream, cell) {
 		return this.observe(stream, cell.set.bind(cell));
 	},
 	

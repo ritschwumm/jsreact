@@ -1,6 +1,7 @@
 var jsreact	= jsreact || {};
 
 jsreact.DOM = {
+	// DOMNode,String,Boolean,Boolean => { stream:Stream[_], dispose:()=>Unit }
 	eventStream: function(target, eventName, preventDefault, capture) {
 		var emitter		= new jsreact.Emitter();
 		var listener	= function(ev) {
@@ -18,6 +19,7 @@ jsreact.DOM = {
 		};
 	},
 	
+	// Number => { stream:Stream[_], dispose:()=>Unit }
 	intervalStream: function(cycleMillis) {
 		var emitter	= new jsreact.Emitter();
 		var id		= window.setInterval(emitter.emit.bind(emitter), cycleMillis);
