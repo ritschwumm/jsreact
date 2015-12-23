@@ -2,7 +2,7 @@ var jsreact	= jsreact || {};
 
 // T -> { signal:Signal[T], set:T=>Unit }
 jsreact.Cell = function(initial) {
-	this.signal	= new jsreact.Signal(function(first, previous) {
+	this.signal	= new jsreact.Signal(function(currentTick, first, previous) {
 		return first ? initial : previous;
 	});
 };

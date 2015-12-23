@@ -39,16 +39,16 @@ jsreact.Stream.prototype	= {
 	//------------------------------------------------------------------------------
 	//## private
 	
-	update: function() {
+	update: function(currentTick) {
 		if (this.version === null) {
-			this.version	= jsreact.Engine.currentTick;
-			var next		= this.calculate(true);
+			this.version	= currentTick;
+			var next		= this.calculate(currentTick, true);
 			this.change		= next.change;
 			this.fire		= next.fire;
 		}
-		else if (this.version !== jsreact.Engine.currentTick) {
-			this.version	= jsreact.Engine.currentTick;
-			var next		= this.calculate(false);
+		else if (this.version !== currentTick) {
+			this.version	= currentTick;
+			var next		= this.calculate(currentTick, false);
 			this.change		= next.change;
 			this.fire		= next.fire;
 		}

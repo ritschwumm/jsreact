@@ -9,8 +9,8 @@ jsreact.Signals = {
 	// ((T, T) => Boolean) => Signal[T] => Signal[T]
 	treatAsEqual: function(func) {
 		return function(signal) {
-			return new jsreact.Signal(function(first, previous) {
-				signal.update();
+			return new jsreact.Signal(function(currentTick, first, previous) {
+				signal.update(currentTick);
 				return first || !func(signal.value, previous)
 						? signal.value
 						: previous;
@@ -21,8 +21,8 @@ jsreact.Signals = {
 	// (S => T) => (Signal[S] => Signal[T])
 	map: function(func) {
 		return function(signal) {
-			return new jsreact.Signal(function(first, previous) {
-				signal.update();
+			return new jsreact.Signal(function(currentTick, first, previous) {
+				signal.update(currentTick);
 				return first || signal.fire
 						? func(signal.value)
 						: previous;
@@ -33,9 +33,9 @@ jsreact.Signals = {
 	// Signal[S => T] => (Signal[S] => Signal[T])
 	ap: function(funcSignal) {
 		return function(signal) {
-			return new jsreact.Signal(function(first, previous) {
-				funcSignal.update();
-				signal.update();
+			return new jsreact.Signal(function(currentTick, first, previous) {
+				funcSignal.update(currentTick);
+				signal.update(currentTick);
 				return first || funcSignal.fire || signal.fire
 						? funcSignal.value(signal.value)
 						: previous;
@@ -46,9 +46,9 @@ jsreact.Signals = {
 	// ((S1, S2) => T) => (Signal[S1], Signal[S2]) => Signal[T]
 	combine: function(func2) {
 		return function(signal1, signal2) {
-			return new jsreact.Signal(function(first, previous) {
-				signal1.update();
-				signal2.update();
+			return new jsreact.Signal(function(currentTick, first, previous) {
+				signal1.update(currentTick);
+				signal2.update(currentTick);
 				return first || signal1.fire || signal2.fire
 						? func2(signal1.value, signal2.value)
 						: previous;
@@ -78,9 +78,9 @@ jsreact.Signals = {
 	
 	// Signal[Signal[T]] => Signal[T]
 	flatten: function(signalSignal) {
-		return new jsreact.Signal(function(first, previous) {
-			signalSignal.update();
-			signalSignal.value.update();
+		return new jsreact.Signal(function(currentTick, first, previous) {
+			signalSignal.update(currentTick);
+			signalSignal.value.update(currentTick);
 			return first || signalSignal.fire || signalSignal.value.fire
 					? signalSignal.value.value
 					: previous;
@@ -96,10 +96,10 @@ jsreact.Signals = {
 	
 	// Signal[Stream[T]] => Stream[T]
 	flattenStream: function(streamSignal) {
-		return new jsreact.Stream(function(first) {
-			streamSignal.update();
+		return new jsreact.Stream(function(currentTick, first) {
+			streamSignal.update(currentTick);
 			var stream	= streamSignal.value;
-			stream.update();
+			stream.update(currentTick);
 			return {
 				change: stream.change,
 				fire:	stream.fire
@@ -114,8 +114,8 @@ jsreact.Signals = {
 	
 	// Signal[T] => Stream[T]
 	changes: function(signal) {
-		return new jsreact.Stream(function(first) {
-			signal.update();
+		return new jsreact.Stream(function(currentTick, first) {
+			signal.update(currentTick);
 			return {
 				change:	signal.value,
 				fire:	signal.fire
@@ -126,8 +126,8 @@ jsreact.Signals = {
 	// (Array[S] => T) => Array[Signal[S]] => T
 	combineMany: function(func) {
 		return function(signalArray) {
-			return new jsreact.Signal(function(first, previous) {
-				signalArray.forEach(function(it) { it.update(); });
+			return new jsreact.Signal(function(currentTick, first, previous) {
+				signalArray.forEach(function(it) { it.update(currentTick); });
 				return first || signalArray.some(function(it) { return it.fire; })
 						?	func.apply(
 								null,
@@ -140,8 +140,8 @@ jsreact.Signals = {
 	
 	// Array[Signal[T]] => Signal[Array[T]]
 	sequenceArray: function(signalArray) {
-		return new jsreact.Signal(function(first, previous) {
-			signalArray.forEach(function(it) { it.update(); });
+		return new jsreact.Signal(function(currentTick, first, previous) {
+			signalArray.forEach(function(it) { it.update(currentTick); });
 			return first || signalArray.some(function(it) { return it.fire; })
 					?	signalArray.map(function(it) { return it.value; })
 					:	previous;
@@ -177,8 +177,8 @@ jsreact.Signals = {
 	construct: function(inputs) {
 		var keys	= inputs.keys();
 		var values	= keys.map(function(key) { return inputs[key]; });
-		return new jsreact.Signal(function(first, previous) {
-			values.forEach(function(it) { it.update(); });
+		return new jsreact.Signal(function(currentTick, first, previous) {
+			values.forEach(function(it) { it.update(currentTick); });
 			var fire	= first || values.some(function(it) { return it.fire; });
 			if (fire) {
 				var out	= {};

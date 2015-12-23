@@ -2,7 +2,7 @@ var jsreact	= jsreact || {};
 
 // () -> { stream:Stream[T], emit:T=>Unit }
 jsreact.Emitter = function() {
-	this.stream	= new jsreact.Stream(function(first) {
+	this.stream	= new jsreact.Stream(function(currentTick, first) {
 		return {
 			fire:	this.fire,
 			change:	this.change

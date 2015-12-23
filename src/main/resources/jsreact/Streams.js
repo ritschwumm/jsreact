@@ -24,7 +24,7 @@ jsreact.Streams	= {
 	
 	// T => Stream[T]
 	once: function(change) {
-		return new jsreact.Stream(function(first) {
+		return new jsreact.Stream(function(currentTick, first) {
 			return {
 				change:	change,
 				fire:	first//,
@@ -34,9 +34,9 @@ jsreact.Streams	= {
 	
 	// (Stream[T], Stream[T]) => Stream[T]
 	orElse: function(stream1, stream2) {
-		return new jsreact.Stream(function(first) {
-			stream1.update();
-			stream2.update();
+		return new jsreact.Stream(function(currentTick, first) {
+			stream1.update(currentTick);
+			stream2.update(currentTick);
 			return {
 				change:	stream1.fire ? stream1.change : stream2.change,
 				fire:	stream1.fire || stream2.fire//,
@@ -46,9 +46,9 @@ jsreact.Streams	= {
 	
 	// (Stream[T], Stream[T]) => Stream[Array[T]] (non-empty)
 	merge: function(stream1, stream2) {
-		return new jsreact.Stream(function(first) {
-			stream1.update();
-			stream2.update();
+		return new jsreact.Stream(function(currentTick, first) {
+			stream1.update(currentTick);
+			stream2.update(currentTick);
 			var changes	= [];
 			if (stream1.fire)	changes.push(stream1.change);
 			if (stream2.fire)	changes.push(stream2.change);
@@ -62,8 +62,8 @@ jsreact.Streams	= {
 	// (T => Boolean) => (Stream[T] => Stream[T])
 	filter: function(pred) {
 		return function(stream) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
+			return new jsreact.Stream(function(currentTick, first) {
+				stream.update(currentTick);
 				return {
 					change:	stream.change,
 					fire:	stream.fire && pred(stream.change)//,
@@ -114,8 +114,8 @@ jsreact.Streams	= {
 	// (S => T) => (Stream[S] => Stream[T])
 	map: function(func) {
 		return function(stream) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
+			return new jsreact.Stream(function(currentTick, first) {
+				stream.update(currentTick);
 				return {
 					change:	stream.fire ? func(stream.change) : null,
 					fire:	stream.fire//,
@@ -127,8 +127,8 @@ jsreact.Streams	= {
 	// T => Stream[S] => Stream[T]
 	tag: function(value) {
 		return function(stream) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
+			return new jsreact.Stream(function(currentTick, first) {
+				stream.update(currentTick);
 				return {
 					change:	value,
 					fire:	stream.fire//,
@@ -158,12 +158,12 @@ jsreact.Streams	= {
 	// Stream[Stream[T]] => Stream[T]
 	flatten: function(streamStream) {
 		var stream	= jsreact.Streams.never();
-		return new jsreact.Stream(function(first) {
-			streamStream.update();
+		return new jsreact.Stream(function(currentTick, first) {
+			streamStream.update(currentTick);
 			if (streamStream.fire) {
 				stream	= streamStream.change;
 			}
-			stream.update();
+			stream.update(currentTick);
 			return {
 				change:	stream.change,
 				fire:	stream.fire//,
@@ -174,9 +174,9 @@ jsreact.Streams	= {
 	// ((S1, S2) => T) => ((Stream[S1], Signal[S2]) => Stream[T])
 	sample: function(func) {
 		return function(stream, signal) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
-				signal.update();
+			return new jsreact.Stream(function(currentTick, first) {
+				stream.update(currentTick);
+				signal.update(currentTick);
 				return {
 					change:	stream.fire ? func(stream.change, signal.value) : null,
 					fire:	stream.fire//,
@@ -202,8 +202,8 @@ jsreact.Streams	= {
 	// T => Stream[T] => Signal[T]
 	hold: function(initial) {
 		return function(stream) {
-			return new jsreact.Signal(function(first, previous) {
-				stream.update();
+			return new jsreact.Signal(function(currentTick, first, previous) {
+				stream.update(currentTick);
 				return stream.fire ? stream.change : first ? initial : previous;
 			});
 		};
@@ -214,8 +214,8 @@ jsreact.Streams	= {
 		return function(initial) {
 			var value	= initial;
 			return function(stream) {
-				return new jsreact.Stream(function(first) {
-					stream.update();
+				return new jsreact.Stream(function(currentTick, first) {
+					stream.update(currentTick);
 					if (stream.fire) {
 						value	= func(value, stream.change);
 					}
@@ -233,8 +233,8 @@ jsreact.Streams	= {
 		return function(initial) {
 			var state	= initial;
 			return function(stream) {
-				return new jsreact.Stream(function(first) {
-					stream.update();
+				return new jsreact.Stream(function(currentTick, first) {
+					stream.update(currentTick);
 					if (stream.fire) {
 						var next	= func(state, stream.change);
 						state		= next.state;
@@ -257,8 +257,8 @@ jsreact.Streams	= {
 	// first stream to fire wins
 	// Array[Stream[T]] => Stream[T]
 	orElseMany: function(streamArray) {
-		return new jsreact.Stream(function(first) {
-			streamArray.forEach(function(it) { it.update(); });
+		return new jsreact.Stream(function(currentTick, first) {
+			streamArray.forEach(function(it) { it.update(currentTick); });
 			for (var i=0; i<streamArray.length; i++) {
 				var input	= streamArray[i];
 				if (input.fire) {
@@ -278,8 +278,8 @@ jsreact.Streams	= {
 	// NOTE this is not traverse, the outgoing array size changes (but is always non-zero)
 	// Array[Stream[T]] => Stream[Array[T]]
 	mergeMany: function(streamArray) {
-		return new jsreact.Stream(function(first) {
-			streamArray.forEach(function(it) { it.update(); });
+		return new jsreact.Stream(function(currentTick, first) {
+			streamArray.forEach(function(it) { it.update(currentTick); });
 			var changes	= [];
 			for (var i=0; i<streamArray.length; i++) {
 				var input	= streamArray[i];
@@ -325,8 +325,8 @@ jsreact.Streams	= {
 	// Key => Stream[{Key:X}] => Stream[X]
 	pluck: function(key) {
 		return function(stream) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
+			return new jsreact.Stream(function(currentTick, first) {
+				stream.update(currentTick);
 				var fire	= stream.fire;
 				return {
 					change:	fire ? stream.change[key] : null,
@@ -351,8 +351,8 @@ jsreact.Streams	= {
 	// Key => Stream[{Key:X}] => Stream[X]
 	pluckOptional: function(key) {
 		return function(stream) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
+			return new jsreact.Stream(function(currentTick,first) {
+				stream.update(currentTick);
 				var fire	= stream.fire && stream.change.hasOwnProperty(key);
 				return {
 					change:	fire ? stream.change[key] : null,

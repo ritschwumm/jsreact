@@ -33,16 +33,16 @@ jsreact.Signal.prototype	= {
 	//------------------------------------------------------------------------------
 	//## private
 	
-	update: function() {
+	update: function(currentTick) {
 		if (this.version === null) {
-			this.version	= jsreact.Engine.currentTick;
-			this.value		= this.calculate(true, null);
+			this.version	= currentTick;
+			this.value		= this.calculate(currentTick, true, null);
 			this.fire		= false;
 		}
-		else if (this.version !== jsreact.Engine.currentTick) {
-			this.version	= jsreact.Engine.currentTick;
+		else if (this.version !== currentTick) {
+			this.version	= currentTick;
 			var previous	= this.value;
-			this.value		= this.calculate(false, previous);
+			this.value		= this.calculate(currentTick, false, previous);
 			this.fire		= this.value !== previous;
 		}
 	},
