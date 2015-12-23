@@ -78,7 +78,7 @@ jsreact.Signals = {
 	// (S => Stream[T]) => (Signal[S] => Stream[T])
 	flatMapStream: function(func) {
 		return function(signal) {
-			return jsreact.Signals.flattenStream(jsreact.Signals.map(func, signal));
+			return jsreact.Signals.flattenStream(jsreact.Signals.map(func)(signal));
 		};
 	},
 	
