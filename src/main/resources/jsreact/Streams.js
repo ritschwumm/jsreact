@@ -222,29 +222,13 @@ jsreact.Streams	= {
 		};
 	},
 	
-	//------------------------------------------------------------------------------
-	
-	// Key => Stream[{Key:X}] => Stream[X]
-	destruct: function(key) {
-		return function(stream) {
-			return new jsreact.Stream(function(first) {
-				stream.update();
-				var fire	= stream.fire && stream.change.hasOwnProperty(key);
-				return {
-					change:	fire ? stream.change[key] : null,
-					fire:	fire//,
-				};
-			});
-		};
-	},
-	
-	// Stream[T]* => Stream[T]
-	multiOrElse: function(/*streams*/) {
-		var inputs	= Array.prototype.slice.call(arguments, 0);
+	// first tstream to fire wins
+	// Array[Stream[T]] => Stream[T]
+	orElseMany: function(streamArray) {
 		return new jsreact.Stream(function(first) {
-			inputs.forEach(function(it) { it.update(); });
-			for (var i=0; i<inputs.length; i++) {
-				var input	= inputs[i];
+			streamArray.forEach(function(it) { it.update(); });
+			for (var i=0; i<streamArray.length; i++) {
+				var input	= streamArray[i];
 				if (input.fire) {
 					return {
 						change:	input.change,
@@ -259,14 +243,14 @@ jsreact.Streams	= {
 		});
 	},
 	
-	// Stream[T]* => Stream[Array[T]] (non-empty)
-	multiMerge: function(/*streams*/) {
-		var inputs	= Array.prototype.slice.call(arguments, 0);
+	// NOTE this is not traverse, the outgoing array size changes (but is always non-zero)
+	// Array[Stream[T]] => Stream[Array[T]]
+	mergeMany: function(streamArray) {
 		return new jsreact.Stream(function(first) {
-			inputs.forEach(function(it) { it.update(); });
+			streamArray.forEach(function(it) { it.update(); });
 			var changes	= [];
-			for (var i=0; i<inputs.length; i++) {
-				var input	= inputs[i];
+			for (var i=0; i<streamArray.length; i++) {
+				var input	= streamArray[i];
 				if (input.fire) {
 					changes.push(input.change);
 				}
@@ -276,5 +260,35 @@ jsreact.Streams	= {
 				fire:	changes.length !== 0//,
 			};
 		});
+	},
+	
+	//------------------------------------------------------------------------------
+	
+	// Stream[T]* => Stream[T]
+	multiOrElse: function(/*streams*/) {
+		var inputs	= Array.prototype.slice.call(arguments, 0);
+		return jsreact.Streams.orElseMany(inputs);
+	},
+	
+	// Stream[T]* => Stream[Array[T]] (non-empty)
+	multiMerge: function(/*streams*/) {
+		var inputs	= Array.prototype.slice.call(arguments, 0);
+		return jsreact.Signals.mergeMany(inputs);
+	},
+	
+	//------------------------------------------------------------------------------
+	
+	// Key => Stream[{Key:X}] => Stream[X]
+	destruct: function(key) {
+		return function(stream) {
+			return new jsreact.Stream(function(first) {
+				stream.update();
+				var fire	= stream.fire && stream.change.hasOwnProperty(key);
+				return {
+					change:	fire ? stream.change[key] : null,
+					fire:	fire//,
+				};
+			});
+		};
 	}//,
 };

@@ -49,7 +49,7 @@ jsreact.Signals = {
 		return jsreact.Signals.combine(function(a, b) { return [ a, b ]; })(signal1, signal2);
 	},
 	
-	// Signal[(T1, T2)] => (Signal[T1],S ignal[T2])
+	// Signal[(T1, T2)] => (Signal[T1],Signal[T2])
 	unzip: function(signal) {
 		return [
 			signal.map(function(it) { return it[0]; }),
@@ -75,6 +75,26 @@ jsreact.Signals = {
 		});
 	},
 	
+	// (S => Stream[T]) => (Signal[S] => Stream[T])
+	flatMapStream: function(func) {
+		return function(signal) {
+			return jsreact.Signals.flattenStream(jsreact.Signals.map(func, signal));
+		};
+	},
+	
+	// Signal[Stream[T]] => Stream[T]
+	flattenStream: function(streamSignal) {
+		return new jsreact.Stream(function(first) {
+			streamSignal.update();
+			var stream	= streamSignal.value;
+			stream.update();
+			return {
+				change: stream.change,
+				fire:	stream.fire
+			};
+		});
+	},
+	
 	// (R => Signal[S], S => Signal[T]) => (R => Signal[T])
 	chain: function(bindFunc1, bindFunc2) {
 		return jsreact.Functions.andThen(bindFunc1, jsreact.Signals.flatMap(bindFunc2));
@@ -91,37 +111,58 @@ jsreact.Signals = {
 		});
 	},
 	
-	//------------------------------------------------------------------------------
-	
-	// Signal[_]* => (Value* => Value) => Signal
-	multiCombine: function(/*signals*/) {
-		var inputs	= Array.prototype.slice.call(arguments, 0);
-		return function(funcN) {
+	// (Array[S] => T) => Array[Signal[S]] => T
+	combineMany: function(func) {
+		return function(signalArray) {
 			return new jsreact.Signal(function(first, previous) {
-				inputs.forEach(function(it) { it.update(); });
-				return first || inputs.some(function(it) { return it.fire; })
-						?	funcN.apply(
+				signalArray.forEach(function(it) { it.update(); });
+				return first || signalArray.some(function(it) { return it.fire; })
+						?	func.apply(
 								null,
-								inputs.map(function(it) { return it.value; })
+								signalArray.map(function(it) { return it.value; })
 							)
 						:	previous;
 			});
 		};
 	},
 	
-	// Signal[_]*	=> Signal[Array[_]]
-	multiZip: function(/*signals*/) {
-		var inputs	= Array.prototype.slice.call(arguments, 0);
+	// Array[Signal[T]] => Signal[Array[T]]
+	sequenceArray: function(signalArray) {
 		return new jsreact.Signal(function(first, previous) {
-			inputs.forEach(function(it) { it.update(); });
-			return first || inputs.some(function(it) { return it.fire; })
-					?	inputs.map(function(it) { return it.value; })
+			signalArray.forEach(function(it) { it.update(); });
+			return first || signalArray.some(function(it) { return it.fire; })
+					?	signalArray.map(function(it) { return it.value; })
 					:	previous;
 		});
 	},
 	
+	// (S => Signal[T]) => (Array[S] => Signal[Array[T]])
+	traverseArray: function(func) {
+		return function(array) {
+			jsreact.Signals.sequenceArray(array.map(func));
+		}
+	},
+	
+	//------------------------------------------------------------------------------
+	
+	// Signal[_]* => (Value* => Value) => Signal
+	multiCombine: function(/*signals*/) {
+		var inputs	= Array.prototype.slice.call(arguments, 0);
+		return function(funcN) {
+			return jsreact.Signals.combineMany(funcN)(inputs);
+		};
+	},
+	
+	// Signal[_]*	=> Signal[Array[_]]
+	multiZip: function(/*signals*/) {
+		var inputs	= Array.prototype.slice.call(arguments, 0);
+		return jsreact.Signals.sequenceArray(inputs);
+	},
+	
+	//------------------------------------------------------------------------------
+	
 	// Hash[Signal[_]]	=> Signal[Hash[_]]
-	multiStruct: function(inputs) {
+	construct: function(inputs) {
 		var keys	= inputs.keys();
 		var values	= keys.map(function(key) { return inputs[key]; });
 		return new jsreact.Signal(function(first, previous) {
