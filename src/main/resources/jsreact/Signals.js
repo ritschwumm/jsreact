@@ -123,14 +123,14 @@ jsreact.Signals = {
 	// Hash[Signal[_]]	=> Signal[Hash[_]]
 	multiStruct: function(inputs) {
 		var keys	= inputs.keys();
-		var value	= keys.map(function(key) { return inputs[key]; });
+		var values	= keys.map(function(key) { return inputs[key]; });
 		return new jsreact.Signal(function(first, previous) {
 			values.forEach(function(it) { it.update(); });
-			var fire	= first || values.some(function(it) { it.fire; });
+			var fire	= first || values.some(function(it) { return it.fire; });
 			if (fire) {
 				var out	= {};
 				keys.forEach(function(key) {
-					out[key]	= input[key].value;
+					out[key]	= inputs[key].value;
 				});
 				return out;
 			}
