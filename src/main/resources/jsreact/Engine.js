@@ -6,24 +6,17 @@ jsreact.Engine	= function(onPropagationError) {
 	this.subscribers	= [];
 	this.currentTick	= {};
 	this.propagating	= false;
-	
-	this.propagateFunc	= this.propagate.bind(this);
-	
-	//## public
-	
-	// TODO ugly
-	this.DOM	= new jsreact.DOM(this.connectExternal.bind(this));
 };
 jsreact.Engine.prototype	= {
 	//------------------------------------------------------------------------------
 	//## source
 	
 	newCell: function(initial) {
-		return new jsreact.Cell(this.propagateFunc, initial);
+		return new jsreact.Cell(this, initial);
 	},
 	
 	newEmitter: function() {
-		return new jsreact.Emitter(this.propagateFunc);
+		return new jsreact.Emitter(this);
 	},
 	
 	connectExternal: function(subscribeFunc) {
@@ -52,6 +45,10 @@ jsreact.Engine.prototype	= {
 	
 	//------------------------------------------------------------------------------
 	//## private
+	
+	delay: function(task) {
+		window.setTimeout(task, 0);
+	},
 	
 	propagate: function(currentTick) {
 		if (this.propagating)	throw new Error("propagation already in progress");

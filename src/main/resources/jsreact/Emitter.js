@@ -1,8 +1,8 @@
 var jsreact	= jsreact || {};
 
-// (Tick => Unit) => { stream:Stream[T], emit:T=>Unit }
-jsreact.Emitter = function(propagateFunc) {
-	this.propagateFunc	= propagateFunc;
+// Engine => { stream:Stream[T], emit:T=>Unit }
+jsreact.Emitter = function(engine) {
+	this.engine	= engine;
 	
 	//## public
 	
@@ -15,7 +15,7 @@ jsreact.Emitter = function(propagateFunc) {
 };
 jsreact.Emitter.prototype	= {
 	emit: function(change) {
-		window.setTimeout(this.emitImpl.bind(this, change), 0);
+		this.engine.delay(this.emitImpl.bind(this, change));
 	},
 	
 	emitImpl: function(change) {
@@ -24,7 +24,7 @@ jsreact.Emitter.prototype	= {
 		this.stream.version	= nextTick;
 		this.stream.change	= change;
 		this.stream.fire	= true;
-		this.propagateFunc(nextTick);
+		this.engine.propagate(nextTick);
 		this.stream.fire	= false;
 	}//,
 };

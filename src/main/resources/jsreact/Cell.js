@@ -1,8 +1,8 @@
 var jsreact	= jsreact || {};
 
-// (Tick => Unit, T) => { signal:Signal[T], set:T=>Unit }
-jsreact.Cell = function(propagateFunc, initial) {
-	this.propagateFunc	= propagateFunc;
+// Engine => { signal:Signal[T], set:T=>Unit }
+jsreact.Cell = function(engine, initial) {
+	this.engine	= engine;
 	
 	//## public
 	
@@ -12,11 +12,11 @@ jsreact.Cell = function(propagateFunc, initial) {
 };
 jsreact.Cell.prototype	= {
 	set: function(change) {
-		window.setTimeout(this.setImpl.bind(this, change), 0);
+		this.engine.delay(this.setImpl.bind(this, change));
 	},
 	
 	modify: function(func) {
-		window.setTimeout(this.modifyImpl.bind(this, func), 0);
+		this.engine.delay(this.modifyImpl.bind(this, func));
 	},
 	
 	//------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ jsreact.Cell.prototype	= {
 		this.signal.version	= nextTick;
 		this.signal.value	= value;
 		this.signal.fire	= true;
-		this.propagateFunc(nextTick);
+		this.engine.propagate(nextTick);
 		this.signal.fire	= false;
 	},
 	

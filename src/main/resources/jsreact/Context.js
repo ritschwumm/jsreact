@@ -3,11 +3,6 @@ var jsreact	= jsreact || {};
 jsreact.Context	= function(engine, observing) {
 	this.engine		= engine;
 	this.observing	= observing;
-	
-	//## public
-	
-	// TODO ugly
-	this.DOM	= this.engine.DOM;
 };
 jsreact.Context.prototype	= {
 	//------------------------------------------------------------------------------
