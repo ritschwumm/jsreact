@@ -26,9 +26,6 @@ jsreact.Signal.prototype	= {
 	flatMapStream:	function(func)			{ return jsreact.Signals.flatMapStream(func)(this);	},
 	flattenStream:	function()				{ return jsreact.Signals.flattenStream(this);		},
 	changes:		function()				{ return jsreact.Signals.changes(this);				},
-	combineMany:	function(func)			{ return jsreact.Signals.combineMany(func)(this);	},
-	sequenceArray:	function()				{ return jsreact.Signals.sequenceArray(this);		},
-	traverseArray:	function(func)			{ return jsreact.Signals.traverseArray(func)(this);	},
 	pluck:			function(key)			{ return jsreact.Signals.pluck(key)(this);			},
 	destruct:		function(keys)			{ return jsreact.Signals.destruct(keys)(this);		},
 

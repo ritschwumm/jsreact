@@ -60,7 +60,7 @@ jsreact.Signals = {
 	// (S => Signal[T]) => (Signal[S] => Signal[T])
 	flatMap: function(func) {
 		return function(signal) {
-			return jsreact.Signals.flatten(jsreact.Signals.map(func, signal));
+			return jsreact.Signals.flatten(jsreact.Signals.map(func)(signal));
 		};
 	},
 	

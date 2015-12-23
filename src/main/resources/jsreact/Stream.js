@@ -32,8 +32,6 @@ jsreact.Stream.prototype	= {
 	trues:		function()				{ return jsreact.Streams.trues(this);					},
 	falses:		function()				{ return jsreact.Streams.falses(this);					},
 	not:		function()				{ return jsreact.Streams.not(this);						},
-	orElseMany:	function()				{ return jsreact.Streams.orElseMany(this);				},
-	mergeMany:	function()				{ return jsreact.Streams.mergeMany(this);				},
 	
 	//------------------------------------------------------------------------------
 	//## private

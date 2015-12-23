@@ -151,7 +151,7 @@ jsreact.Streams	= {
 	// (S => Stream[T]) => (Stream[S] => Stream[T])
 	flatMap: function(func) {
 		return function(stream) {
-			return jsreact.Streams.flatten(jsreact.Streams.map(func, stream));
+			return jsreact.Streams.flatten(jsreact.Streams.map(func)(stream));
 		};
 	},
 	
@@ -222,7 +222,7 @@ jsreact.Streams	= {
 		};
 	},
 	
-	// ((S, T) => { state:S, result:U } => S => Stream[T] => Stream[U]
+	// ((S, T) => { state:S, result:U }) => S => Stream[T] => Stream[U]
 	stateful: function(func) {
 		return function(initial) {
 			var state	= initial;
