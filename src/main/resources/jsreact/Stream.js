@@ -22,7 +22,7 @@ jsreact.Stream.prototype	= {
 	map:		function(func)			{ return jsreact.Streams.map(func)(this); 				},
 	tag:		function(value)			{ return jsreact.Streams.tag(value)(this); 				},
 	ap:			function(valueStream)	{ return jsreact.Streams.ap(this)(valueStream); 		},
-	flatMap:	function(streamFunc)	{ return jsreact.Streams.flatMap(this)(streamFunc); 	},
+	flatMap:	function(streamFunc)	{ return jsreact.Streams.flatMap(streamFunc)(this); 	},
 	flatten:	function()				{ return jsreact.Streams.flatten(this);				 	},
 	sample:		function(signal, func)	{ return jsreact.Streams.sample(func)(this, signal);	},
 	sampleOnly:	function(signal)		{ return jsreact.Streams.sampleOnly(this, signal);		},
