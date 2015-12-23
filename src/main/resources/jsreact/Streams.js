@@ -9,7 +9,7 @@ jsreact.Streams	= {
 				change:	null,
 				fire:	false
 			})
-		)
+		);
 	},
 	
 	// T => Stream[T]
@@ -196,7 +196,7 @@ jsreact.Streams	= {
 			return new jsreact.Signal(
 				function(first, previous) {
 					stream.update();
-					return stream.fire ? stream.change : first ? initial : previous
+					return stream.fire ? stream.change : first ? initial : previous;
 				},
 				initial
 			);

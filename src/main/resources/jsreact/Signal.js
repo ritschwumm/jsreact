@@ -6,7 +6,7 @@ jsreact.Signal	= function Signal(calculate) {
 	this.version	= null;
 	this.value		= null;
 	this.fire		= false;
-}
+};
 jsreact.Signal.prototype	= {
 	/** don't use unless you know what you're doing */
 	currentValue: function() {
@@ -18,11 +18,11 @@ jsreact.Signal.prototype	= {
 	
 	map:		function(func)			{ return jsreact.Signals.map(func)(this);			},
 	ap:			function(func)			{ return jsreact.Signals.ap(func)(this);			},
-	combine:	function(that, func)	{ return jsreact.Signals.combine(func)(this, that)	},
-	zip:		function(that)			{ return jsreact.Signals.zip(this, that)			},
-	unzip:		function()				{ return jsreact.Signals.unzip(this)				},
+	combine:	function(that, func)	{ return jsreact.Signals.combine(func)(this, that);	},
+	zip:		function(that)			{ return jsreact.Signals.zip(this, that);			},
+	unzip:		function()				{ return jsreact.Signals.unzip(this);				},
 	flatMap:	function(func)			{ return jsreact.Signals.flatMap(func)(this);		},
-	flatten:	function()				{ return jsreact.Signals.flatten(this)				},
+	flatten:	function()				{ return jsreact.Signals.flatten(this);				},
 	changes:	function()				{ return jsreact.Signals.changes(this);				},
 	
 	//------------------------------------------------------------------------------

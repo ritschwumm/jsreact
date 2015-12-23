@@ -6,7 +6,7 @@ jsreact.Stream	= function Stream(calculate) {
 	this.version	= null;
 	this.change		= null;
 	this.fire		= false;
-}
+};
 jsreact.Stream.prototype	= {
 	//------------------------------------------------------------------------------
 	//## syntax
@@ -25,8 +25,8 @@ jsreact.Stream.prototype	= {
 	flatten:	function()				{ return jsreact.Streams.flatten(this);				 	},
 	sample:		function(signal, func)	{ return jsreact.Streams.sample(func)(this, signal);	},
 	sampleOnly:	function(signal)		{ return jsreact.Streams.sampleOnly(this, signal);		},
-	hold:		function(initial)		{ return jsreact.Streams.hold(initial)(this)			},
-	fold:		function(initial, func)	{ return jsreact.Streams.fold(initial, func)(this)		},
+	hold:		function(initial)		{ return jsreact.Streams.hold(initial)(this);			},
+	fold:		function(initial, func)	{ return jsreact.Streams.fold(initial, func)(this);		},
 	trues:		function()				{ return jsreact.Streams.trues(this);					},
 	falses:		function()				{ return jsreact.Streams.falses(this);					},
 	not:		function()				{ return jsreact.Streams.not(this);						},

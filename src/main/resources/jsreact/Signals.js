@@ -46,7 +46,7 @@ jsreact.Signals = {
 	
 	// (Signal[S1], Signal[S2]) => Signal[(S1, S2)]
 	zip: function(signal1, signal2) {
-		return jsreact.Signals.combine(function(a, b) { return [ a, b ]})(signal1, signal2);
+		return jsreact.Signals.combine(function(a, b) { return [ a, b ]; })(signal1, signal2);
 	},
 	
 	// Signal[(T1, T2)] => (Signal[T1],S ignal[T2])
