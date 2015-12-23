@@ -1,6 +1,6 @@
 name				:= "jsreact"
 organization		:= "de.djini"
-version				:= "0.8.1"
+version				:= "0.9.0"
 
 crossPaths			:= false
 autoScalaLibrary	:= false

@@ -1,17 +1,27 @@
 var jsreact	= jsreact || {};
 
 jsreact.DOM = {
-	listen: function(target, eventName, preventDefault) {
+	eventStream: function(target, eventName, preventDefault, capture) {
 		var emitter		= new jsreact.Emitter();
 		var listener	= function(ev) {
 			if (preventDefault)	ev.preventDefault();
 			emitter.emit(ev);
 		};
-		var capture		= false;
-		target.addEventListener(eventName, listener, capture);
+		var captureBoolean	= !!capture;
+		target.addEventListener(eventName, listener, captureBoolean);
 		var dispose		= function() {
-			target.removeEventListener(eventName, listener, capture);
+			target.removeEventListener(eventName, listener, captureBoolean);
 		};
+		return {
+			stream:		emitter.stream,
+			dispose:	dispose//,
+		};
+	},
+	
+	intervalStream: function(cycleMillis) {
+		var emitter	= new jsreact.Emitter();
+		var id		= window.setInterval(emitter.emit.bind(emitter), cycleMillis);
+		var dispose	= window.clearInterval.bind(window, id);
 		return {
 			stream:		emitter.stream,
 			dispose:	dispose//,
