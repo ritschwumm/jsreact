@@ -71,6 +71,21 @@ jsreact.Streams	= {
 		});
 	},
 	
+	// Stream[Boolean] => Stream[Boolean]
+	trues: function(stream) {
+		return jsreact.Streams.filter(function(it) { return !!it; })(stream);
+	},
+	
+	// Stream[Boolean] => Stream[Boolean]
+	falses: function(stream) {
+		return jsreact.Streams.filter(function(it) { return !it; })(stream);
+	},
+	
+	// Stream[Boolean] => Stream[Boolean]
+	not: function(stream) {
+		return jsreact.Streams.map(function(it) { return !it; });
+	},
+
 	// (S => T) => (Stream[S] => Stream[T])
 	map: function(func) {
 		return function(stream) {
@@ -145,6 +160,11 @@ jsreact.Streams	= {
 		};
 	},
 	
+	// (Stream[S], Signal[T]) => Stream[T]
+	sampleOnly: function(stream, signal) {
+		return jsreact.Streams.sample(function(streamValue, signalValue) { return signalValue; })(stream, signal);
+	},
+	
 	// T => Stream[T] => Signal[T]
 	hold: function(initial) {
 		return function(stream) {
@@ -155,6 +175,23 @@ jsreact.Streams	= {
 				},
 				initial
 			);
+		};
+	},
+	
+	// (T, (T, S) =>T) => Stream[S] => Stream[T]
+	fold: function(initial, func) {
+		var value	= initial;
+		return function(stream) {
+			return new jsreact.Stream(function(first) {
+				stream.update();
+				if (stream.fire) {
+					value	= func(value, stream.change);
+				}
+				return {
+					change:	value,
+					fire:	stream.fire
+				}
+			});
 		};
 	},
 	
