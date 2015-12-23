@@ -2,6 +2,11 @@ var jsreact	= jsreact || {};
 
 jsreact.Engine	= {
 	//------------------------------------------------------------------------------
+	//## public
+	
+	onPropagationError:	function(e) {},
+	
+	//------------------------------------------------------------------------------
 	//## private
 	
 	subscribers:	[],
@@ -17,9 +22,15 @@ jsreact.Engine	= {
 		
 		this.propagating	= true;
 		// cloned because observers might change the original array
-		this.subscribers.slice().forEach(function(subscribers) {
-			subscribers();
-		});
+		var subscribersCopy	= this.subscribers.slice();
+		for (var i=0; i<subscribersCopy.length; i++) {
+			try {
+				subscribersCopy[i]();
+			}
+			catch (e) {
+				this.onPropagationError(e);
+			}
+		}
 		this.propagating	= false;
 	},
 	

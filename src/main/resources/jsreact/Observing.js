@@ -1,6 +1,6 @@
 var jsreact	= jsreact || {};
 
-/** alive unzil the alive signal becomes false */
+/** alive until the alive signal becomes false */
 // Signal[Boolean] -> Observing
 jsreact.Observing	= function Observing(aliveSignal) {
 	this.aliveSignal	= aliveSignal;
@@ -19,11 +19,11 @@ jsreact.Observing.prototype	= {
 		
 		self.aliveSignal.update();
 		if (self.aliveSignal.value) {
-			self.updateAndNotify(reactive, handler, true);
+			self.updateAndNotifyReactive(reactive, handler, true);
 			var unsubscribe	= jsreact.Engine.subscribe(function() {
 				self.aliveSignal.update();
 				if (self.aliveSignal.value) {
-					self.updateAndNotify(reactive, handler, false);
+					self.updateAndNotifyReactive(reactive, handler, false);
 				}
 				else {
 					unsubscribe();
@@ -36,7 +36,7 @@ jsreact.Observing.prototype	= {
 	initialize: function(reactive, handler) {
 		this.aliveSignal.update();
 		if (this.aliveSignal.value) {
-			this.updateAndNotify(reactive, handler, true);
+			this.updateAndNotifyReactive(reactive, handler, true);
 		}
 	},
 	
@@ -54,7 +54,7 @@ jsreact.Observing.prototype	= {
 	//## private
 	
 	// (Reactive[T], Handler[T], Boolean) -> Unit
-	updateAndNotify: function(reactive, handler, first) {
+	updateAndNotifyReactive: function(reactive, handler, first) {
 		reactive.update();
 		reactive.notify(first, handler);
 	}//,
