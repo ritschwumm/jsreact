@@ -8,7 +8,7 @@ jsreact.Observing	= function Observing(aliveSignal) {
 jsreact.Observing.prototype	= {
 	/** alive while this Observing is alive and another Signal didn't become false */
 	child: function(aliveSignal) {
-		function and(a,b) { return a && b }
+		function and(a,b) { return a && b; }
 		var childAlive	= jsreact.Signals.combine(and)(this.aliveSignal, aliveSignal);
 		return new jsreact.Observing(childAlive);
 	},
