@@ -40,7 +40,22 @@ jsreact.Streams	= {
 			return {
 				change:	stream1.fire ? stream1.change : stream2.change,
 				fire:	stream1.fire || stream2.fire
-			}
+			};
+		});
+	},
+	
+	// (Stream[T], Stream[T]) => Stream[Array[T]] (non-empty)
+	merge: function(stream1, stream2) {
+		return new jsreact.Stream(function(first) {
+			stream1.update();
+			stream2.update();
+			var changes	= [];
+			if (stream1.fire)	changes.push(stream1.change);
+			if (stream2.fire)	changes.push(stream2.change);
+			return {
+				change:	changes,
+				fire:	changes.length !== 0
+			};
 		});
 	},
 	
@@ -52,7 +67,7 @@ jsreact.Streams	= {
 				return {
 					change:	stream.change,
 					fire:	stream.fire && pred(stream.change)
-				}
+				};
 			});
 		};
 	},
@@ -94,7 +109,7 @@ jsreact.Streams	= {
 				return {
 					change:	stream.fire ? func(stream.change) : null,
 					fire:	stream.fire
-				}
+				};
 			});
 		};
 	},
@@ -107,7 +122,7 @@ jsreact.Streams	= {
 				return {
 					change:	value,
 					fire:	stream.fire
-				}
+				};
 			});
 		};
 	},
@@ -190,7 +205,7 @@ jsreact.Streams	= {
 				return {
 					change:	value,
 					fire:	stream.fire
-				}
+				};
 			});
 		};
 	},
@@ -201,6 +216,7 @@ jsreact.Streams	= {
 	multiOrElse: function(/*streams*/) {
 		var inputs	= Array.prototype.slice.call(arguments, 0);
 		return new jsreact.Stream(function(first) {
+			inputs.forEach(function(it) { it.update(); });
 			for (var i=0; i<inputs.length; i++) {
 				var input	= inputs[i];
 				if (input.fire) {
@@ -213,6 +229,25 @@ jsreact.Streams	= {
 			return {
 				change:	null,
 				fire:	false//,
+			};
+		});
+	},
+	
+	// Stream[T]* => Stream[Array[T]] (non-empty)
+	multiMerge: function(/*streams*/) {
+		var inputs	= Array.prototype.slice.call(arguments, 0);
+		return new jsreact.Stream(function(first) {
+			inputs.forEach(function(it) { it.update(); });
+			var changes	= [];
+			for (var i=0; i<inputs.length; i++) {
+				var input	= inputs[i];
+				if (input.fire) {
+					changes.push(input.change);
+				}
+			}
+			return {
+				change:	changes,
+				fire:	changes.length !== 0//,
 			};
 		});
 	}//,

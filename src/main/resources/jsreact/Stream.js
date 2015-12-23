@@ -12,6 +12,7 @@ jsreact.Stream.prototype	= {
 	//## syntax
 	
 	orElse:		function(that)			{ return jsreact.Streams.orElse(this, that);			},
+	merge:		function(that)			{ return jsreact.Streams.merge(this, that);				},
 	filter:		function(pred)			{ return jsreact.Streams.filter(pred)(this);			},
 	filterNot:	function(pred)			{ return jsreact.Streams.filterNot(pred)(this);			},
 	notNull:	function()				{ return jsreact.Streams.notNull()(this);				},

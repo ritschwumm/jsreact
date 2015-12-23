@@ -93,7 +93,7 @@ jsreact.Signals = {
 	
 	//------------------------------------------------------------------------------
 	
-	// Signal^x => (Value^x => Value) => Signal
+	// Signal[_]* => (Value* => Value) => Signal
 	multiCombine: function(/*signals*/) {
 		var inputs	= Array.prototype.slice.call(arguments, 0);
 		return function(funcN) {
@@ -109,6 +109,7 @@ jsreact.Signals = {
 		};
 	},
 	
+	// Signal[_]*	=> Signal[Array[_]]
 	multiZip: function(/*signals*/) {
 		var inputs	= Array.prototype.slice.call(arguments, 0);
 		return new jsreact.Signal(function(first, previous) {
@@ -116,6 +117,24 @@ jsreact.Signals = {
 			return first || inputs.some(function(it) { return it.fire; })
 					?	inputs.map(function(it) { return it.value; })
 					:	previous;
+		});
+	},
+	
+	// Hash[Signal[_]]	=> Signal[Hash[_]]
+	multiStruct: function(inputs) {
+		var keys	= inputs.keys();
+		var value	= keys.map(function(key) { return inputs[key]; });
+		return new jsreact.Signal(function(first, previous) {
+			values.forEach(function(it) { it.update(); });
+			var fire	= first || values.some(function(it) { it.fire; });
+			if (fire) {
+				var out	= {};
+				keys.forEach(function(key) {
+					out[key]	= input[key].value;
+				});
+				return out;
+			}
+			else return previous;
 		});
 	}//,
 };
