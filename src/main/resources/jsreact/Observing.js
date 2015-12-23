@@ -53,7 +53,7 @@ jsreact.Observing.prototype	= {
 	//------------------------------------------------------------------------------
 	//## private
 	
-	// (Reactive[T], Handler[T]) -> Unit
+	// (Reactive[T], Handler[T], Boolean) -> Unit
 	updateAndNotify: function(reactive, handler, first) {
 		reactive.update();
 		reactive.notify(first, handler);

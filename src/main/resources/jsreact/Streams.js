@@ -202,13 +202,10 @@ jsreact.Streams	= {
 	// T => Stream[T] => Signal[T]
 	hold: function(initial) {
 		return function(stream) {
-			return new jsreact.Signal(
-				function(first, previous) {
-					stream.update();
-					return stream.fire ? stream.change : first ? initial : previous;
-				},
-				initial
-			);
+			return new jsreact.Signal(function(first, previous) {
+				stream.update();
+				return stream.fire ? stream.change : first ? initial : previous;
+			});
 		};
 	},
 	
