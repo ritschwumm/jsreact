@@ -330,6 +330,32 @@ jsreact.Streams	= {
 		return function(stream) {
 			return new jsreact.Stream(function(first) {
 				stream.update();
+				var fire	= stream.fire;
+				return {
+					change:	fire ? stream.change[key] : null,
+					fire:	fire//,
+				};
+			});
+		};
+	},
+	
+	// Array[Key] => Stream[{Key:_ ...}] => Hash[Key, Stream[_]]
+	destructOptional: function(keys) {
+		return function(stream) {
+			var out	= {};
+			for (var i=0; i<keys.length; i++) {
+				var key		= keys[i];
+				out[key]	= jsreact.Streams.pluckOptional(key)(stream);
+			}
+			return out;
+		};
+	},
+	
+	// Key => Stream[{Key:X}] => Stream[X]
+	pluckOptional: function(key) {
+		return function(stream) {
+			return new jsreact.Stream(function(first) {
+				stream.update();
 				var fire	= stream.fire && stream.change.hasOwnProperty(key);
 				return {
 					change:	fire ? stream.change[key] : null,
