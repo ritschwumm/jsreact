@@ -222,7 +222,7 @@ jsreact.Streams	= {
 		};
 	},
 	
-	// first tstream to fire wins
+	// first stream to fire wins
 	// Array[Stream[T]] => Stream[T]
 	orElseMany: function(streamArray) {
 		return new jsreact.Stream(function(first) {

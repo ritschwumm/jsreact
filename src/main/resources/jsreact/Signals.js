@@ -140,7 +140,7 @@ jsreact.Signals = {
 	traverseArray: function(func) {
 		return function(array) {
 			jsreact.Signals.sequenceArray(array.map(func));
-		}
+		};
 	},
 	
 	//------------------------------------------------------------------------------

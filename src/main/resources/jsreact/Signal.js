@@ -16,14 +16,19 @@ jsreact.Signal.prototype	= {
 	//------------------------------------------------------------------------------
 	//## syntax
 	
-	map:		function(func)			{ return jsreact.Signals.map(func)(this);			},
-	ap:			function(func)			{ return jsreact.Signals.ap(func)(this);			},
-	combine:	function(that, func)	{ return jsreact.Signals.combine(func)(this, that);	},
-	zip:		function(that)			{ return jsreact.Signals.zip(this, that);			},
-	unzip:		function()				{ return jsreact.Signals.unzip(this);				},
-	flatMap:	function(func)			{ return jsreact.Signals.flatMap(func)(this);		},
-	flatten:	function()				{ return jsreact.Signals.flatten(this);				},
-	changes:	function()				{ return jsreact.Signals.changes(this);				},
+	map:			function(func)			{ return jsreact.Signals.map(func)(this);			},
+	ap:				function(func)			{ return jsreact.Signals.ap(func)(this);			},
+	combine:		function(that, func)	{ return jsreact.Signals.combine(func)(this, that);	},
+	zip:			function(that)			{ return jsreact.Signals.zip(this, that);			},
+	unzip:			function()				{ return jsreact.Signals.unzip(this);				},
+	flatMap:		function(func)			{ return jsreact.Signals.flatMap(func)(this);		},
+	flatten:		function()				{ return jsreact.Signals.flatten(this);				},
+	flatMapStream:	function(func)			{ return jsreact.Signals.flatMapStream(func)(this);	},
+	flattenStream:	function()				{ return jsreact.Signals.flattenStream(this);		},
+	changes:		function()				{ return jsreact.Signals.changes(this);				},
+	combineMany:	function(func)			{ return jsreact.Signals.combineMany(func)(this);	},
+	sequenceArray:	function()				{ return jsreact.Signals.sequenceArray(this);		},
+	traverseArray:	function(func)			{ return jsreact.Signals.sequenceArray(func)(this);	},
 	
 	//------------------------------------------------------------------------------
 	//## private
