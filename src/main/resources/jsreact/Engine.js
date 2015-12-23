@@ -7,12 +7,21 @@ jsreact.Engine	= {
 	/** returns a disconnect function */
 	// (Reactive[T], Handler[T]) -> () -> Boolean
 	observe: function(reactive, handler) {
+		this.observeOnce(reactive, handler);
+		return this.subscribe(
+			this.observeAgain.bind(this, reactive, handler)
+		);
+	},
+	
+	/** call this to immediately observe a signal */
+	observeOnce: function(reactive, handler) {
 		reactive.update();
 		reactive.notify(true, handler);
-		return this.subscribe(function() {
-			reactive.update();
-			reactive.notify(false, handler);
-		});
+	},
+	
+	observeAgain: function(reactive, handler) {
+		reactive.update();
+		reactive.notify(false, handler);
 	},
 	
 	//------------------------------------------------------------------------------

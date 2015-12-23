@@ -8,6 +8,11 @@ jsreact.Signal	= function Signal(calculate) {
 	this.fire		= false;
 }
 jsreact.Signal.prototype	= {
+	/** don't use unless you know what you're doing */
+	currentValue: function() {
+		return this.value;
+	},
+	
 	//------------------------------------------------------------------------------
 	//## syntax
 	
