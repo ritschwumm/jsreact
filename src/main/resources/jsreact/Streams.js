@@ -209,7 +209,7 @@ jsreact.Streams	= {
 		};
 	},
 	
-	// ((T, S) =>T) => T => Stream[S] => Stream[T]
+	// ((T, S) => T) => T => Stream[S] => Stream[T]
 	fold: function(func) {
 		return function(initial) {
 			var value	= initial;
