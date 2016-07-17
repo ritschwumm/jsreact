@@ -259,6 +259,7 @@ jsreact.Streams	= {
 		return function(initial) {
 			var stream	= func(initial);
 			return new jsreact.Stream(function(currentTick, first) {
+				stream.update(currentTick);
 				if (stream.fire) {
 					var next	= stream.change;
 					stream	= func(next.state);
