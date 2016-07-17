@@ -23,9 +23,9 @@ jsreact.Context.prototype	= {
 	//------------------------------------------------------------------------------
 	//## drain
 	
-	// (Reactive[T], Handler[T]) -> Unit
-	observe: function(reactive, handler) {
-		this.observing.observe(reactive, handler);
+	// (Reactive[T], Handler[T], Boolean) -> Unit
+	observe: function(reactive, handler, once) {
+		this.observing.observe(reactive, handler, once);
 	},
 	
 	// (Reactive[T], Handler[T]) -> Unit

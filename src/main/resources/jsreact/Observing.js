@@ -20,8 +20,8 @@ jsreact.Observing.prototype	= {
 	//------------------------------------------------------------------------------
 	//## drain
 	
-	// (Reactive[T], Handler[T]) -> Unit
-	observe: function(reactive, handler) {
+	// (Reactive[T], Handler[T], Boolean) -> Unit
+	observe: function(reactive, handler, once) {
 		this.engine.updateReactive(this.aliveSignal);
 		if (this.aliveSignal.value) {
 			this.updateAndNotifyReactive(reactive, handler, true);
@@ -31,6 +31,9 @@ jsreact.Observing.prototype	= {
 				self.engine.updateReactive(self.aliveSignal);
 				if (self.aliveSignal.value) {
 					self.updateAndNotifyReactive(reactive, handler, false);
+					if (once) {
+						unsubscribe();
+					}
 				}
 				else {
 					unsubscribe();
