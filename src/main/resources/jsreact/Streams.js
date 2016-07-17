@@ -254,6 +254,29 @@ jsreact.Streams	= {
 		};
 	},
 	
+	// (S => Stream[{ state:S, result:U }]) => S => Stream[U]
+	statefulLoop: function(func) {
+		return function(initial) {
+			var stream	= func(initial);
+			return new jsreact.Stream(function(currentTick, first) {
+				if (stream.fire) {
+					var next	= stream.change;
+					stream	= func(next.state);
+					return {
+						change:	next.result,
+						fire:	true//,
+					};
+				}
+				else {
+					return {
+						change:	null,
+						fire:	false//,
+					};
+				};
+			});
+		};
+	},
+	
 	// first stream to fire wins
 	// Array[Stream[T]] => Stream[T]
 	orElseMany: function(streamArray) {

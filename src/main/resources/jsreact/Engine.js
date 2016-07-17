@@ -19,9 +19,10 @@ jsreact.Engine.prototype	= {
 		return new jsreact.Emitter(this);
 	},
 	
+	// TODO use a life-cycle context to dispose this
 	connectExternal: function(subscribeFunc) {
-		var emitter		= this.newEmitter();
-		var dispose		= subscribeFunc(emitter.emit.bind(emitter));
+		var emitter	= this.newEmitter();
+		var dispose	= subscribeFunc(emitter.emit.bind(emitter));
 		return {
 			stream:		emitter.stream,
 			dispose:	dispose//,
