@@ -79,7 +79,7 @@ jsreact.Engine.prototype	= {
 	unsubscribe: function(subscriber) {
 		var index	= this.subscribers.indexOf(subscriber);
 		var found	= index !== -1;
-		if (found)	this.subscribers.slice(index, 1);
+		if (found)	this.subscribers.splice(index, 1);
 		return found;
 	}//,
 };
